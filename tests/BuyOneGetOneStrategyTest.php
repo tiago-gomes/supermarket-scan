@@ -13,7 +13,7 @@ class BuyOneGetOneStrategyTest extends TestCase
         $params = ['sku' => 'A', 'free_quantity' => 1];
 
         $strategy = new BuyOneGetOneStrategy();
-        $result = $strategy->apply($item, $params);
+        $result = $strategy->apply($item, null, $params);
 
         $this->assertEquals(2, $result->getQuantity());
     }
@@ -24,7 +24,7 @@ class BuyOneGetOneStrategyTest extends TestCase
         $params = ['sku' => 'A', 'free_quantity' => 1];
 
         $strategy = new BuyOneGetOneStrategy();
-        $result = $strategy->apply($item, $params);
+        $result = $strategy->apply($item, null, $params);
 
         $this->assertEquals(1, $result->getQuantity());
     }
@@ -35,7 +35,7 @@ class BuyOneGetOneStrategyTest extends TestCase
         $params = ['sku' => 'A', 'free_quantity' => 0];
 
         $strategy = new BuyOneGetOneStrategy();
-        $result = $strategy->apply($item, $params);
+        $result = $strategy->apply($item, null, $params);
 
         $this->assertEquals(1, $result->getQuantity());
     }
