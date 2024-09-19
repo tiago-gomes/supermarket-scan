@@ -35,6 +35,18 @@ class BuyMultipleGetPriceStrategy implements RuleStrategyInterface
             return $item;
         }
 
+        // get sku[] from items
+        $itemSkus = array_map(fn($itm) => $itm->getSku(), $items);
+        
+        // merge itemSkus with current item sku
+        $mergedSkus = array_unique(array_merge($itemSkus, [$item->getSku()]));
+
+        // intersect if sku[] exist in mergedSkus[]
+        $combinedSkus = array_intersect($sku, $mergedSkus);
+        if ($combinedSkus != $sku) {
+            return $item;
+        }
+
         $newPrice = $price / count($sku);
 
         return new Item(

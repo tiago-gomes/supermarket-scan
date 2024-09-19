@@ -77,4 +77,25 @@ class BuyMultipleGetPriceStrategyTest extends TestCase
         // Since 'C' is missing, the price should not change
         $this->assertEquals(15.00, $result->getPrice());
     }
+
+    public function testApplyWithExtraSkusInItems()
+    {
+        $item = new Item('D', 'Test Item D', 15.00, 1);
+        $params = ['sku' => ["C", "D"], 'price' => 5];
+
+        $items = [
+            new Item('A', 'Test Item A', 12.00, 1),
+            new Item('B', 'Test Item B', 12.00, 1),
+            new Item('C', 'Test Item C', 12.00, 1),
+            new Item('D', 'Test Item D', 15.00, 1),
+        ];
+
+        $strategy = new BuyMultipleGetPriceStrategy();
+
+        $result = $strategy->apply($item, $items, $params);
+
+        // 'C' and 'D' are present, extra SKUs in items should not affect
+        $this->assertEquals(2.50, $result->getPrice());
+    }
+
 }
