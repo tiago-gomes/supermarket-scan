@@ -4,8 +4,8 @@ namespace Tiagogomes\Supermarket;
 
 use Tiagogomes\Supermarket\Contract\CalculateRulesInterface;
 use Tiagogomes\Supermarket\PricingRules\Contract\RuleStrategyInterface;
-use Tiagogomes\Supermarket\PricingRules\BuyOneGetOneStrategy;
-use Tiagogomes\Supermarket\PricingRules\BuyThreeGetOneStrategy;
+use Tiagogomes\Supermarket\PricingRules\BuyNGetNStrategy;
+use Tiagogomes\Supermarket\PricingRules\BuyMultipleGetPriceStrategy;
 
 class PricingRules implements CalculateRulesInterface
 {
@@ -27,15 +27,16 @@ class PricingRules implements CalculateRulesInterface
     {
         $this->rules = [
             [
-                "class" => BuyOneGetOneStrategy::class,
+                "class" => BuyNGetNStrategy::class,
                 "params" => [
                     "sku" => "A",
                     "description" => "Buy one item A, get another one free.",
                     "free_quantity" => 1,
+                    "required_quantity" => 1,
                 ]
             ],
             [
-                "class" => BuyThreeGetOneStrategy::class,
+                "class" => BuyNGetNStrategy::class,
                 "params" => [
                     "sku" => "B",
                     "description" => "Buy 3 item B, get another one free.",
@@ -43,7 +44,15 @@ class PricingRules implements CalculateRulesInterface
                     "required_quantity" => 3,
                 ]
             ],
-
+            [
+                "class" => BuyMultipleGetPriceStrategy::class,
+                "params" => [
+                    "sku" => ["D","E"],
+                    "description" => "Buy D and E for 3 euros",
+                    "required_quantity" => 1,
+                    "price" => 3.0,
+                ]
+            ],
         ];
     }
 
@@ -52,9 +61,15 @@ class PricingRules implements CalculateRulesInterface
     ): Item
     {
        foreach($this->rules as $rule) {
+
+            if (!isset($rule['params']['sku'])) {
+                break;
+            }
+
+            // depending on the value of sku: string or array
             if (
-                isset($rule['params']['sku']) and 
-                $rule['params']['sku'] == $item->getSku()
+                $rule['params']['sku'] == $item->getSku() ||
+                in_array($item->getSku(), $rule['params']['sku'])
             ) {
 
                 $strategyClass = $rule['class'];
@@ -69,7 +84,7 @@ class PricingRules implements CalculateRulesInterface
                     throw new \Exception("Class {$strategyClass} must implement RuleStrategyInterface.");
                 }
 
-                $item = $strategy->apply($item, $rule['params']);
+                $item = $strategy->apply($item, $this->items, $rule['params']);
                 break;
             }
        }
