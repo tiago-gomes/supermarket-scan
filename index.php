@@ -20,4 +20,4 @@ $pricingRule = new PricingRules($items);
 
 $pricingRule->loadRules();
 
-$item = $pricingRule->apply($item, "buyOneGetOne");
+$item = $pricingRule->apply($item);

@@ -8,5 +8,5 @@ interface CalculateRulesInterface
 {
     public function loadRules(): void;
 
-    public function apply(Item $item, string $promoCode = null): Item;
+    public function apply(Item $item): Item;
 }

@@ -5,6 +5,7 @@ namespace Tiagogomes\Supermarket;
 use Tiagogomes\Supermarket\Contract\CalculateRulesInterface;
 use Tiagogomes\Supermarket\PricingRules\Contract\RuleStrategyInterface;
 use Tiagogomes\Supermarket\PricingRules\BuyOneGetOneStrategy;
+use Tiagogomes\Supermarket\PricingRules\BuyThreeGetOneStrategy;
 
 class PricingRules implements CalculateRulesInterface
 {
@@ -26,7 +27,6 @@ class PricingRules implements CalculateRulesInterface
     {
         $this->rules = [
             [
-                "code" => "buyOneGetOne",
                 "class" => BuyOneGetOneStrategy::class,
                 "params" => [
                     "sku" => "A",
@@ -34,16 +34,28 @@ class PricingRules implements CalculateRulesInterface
                     "free_quantity" => 1,
                 ]
             ],
+            [
+                "class" => BuyThreeGetOneStrategy::class,
+                "params" => [
+                    "sku" => "B",
+                    "description" => "Buy 3 item B, get another one free.",
+                    "free_quantity" => 1,
+                    "required_quantity" => 3,
+                ]
+            ],
+
         ];
     }
 
     public function apply(
-        Item $item, 
-        string $promoCode = null
+        Item $item
     ): Item
     {
        foreach($this->rules as $rule) {
-            if (isset($rule['code']) and $promoCode == $rule['code']) {
+            if (
+                isset($rule['params']['sku']) and 
+                $rule['params']['sku'] == $item->getSku()
+            ) {
 
                 $strategyClass = $rule['class'];
 
