@@ -81,4 +81,52 @@ class CheckoutTest extends TestCase
         $this->assertEquals(1.5, $items[3]->getPrice());
         $this->assertEquals(1.5, $items[4]->getPrice());
     }
+
+    public function testGetTotalWithoutFreeItems()
+    {
+        $checkout = new Checkout();
+
+        $checkout->scan('A', 2);
+
+        $total  = $checkout->getTotal();
+
+        $this->assertEquals(100.00, $total);
+    }
+
+    public function testGetTotalForBuy1Get1Strategy() {
+
+        $checkout = new Checkout();
+
+        $checkout->scan("B", 1);
+
+        $total  = $checkout->getTotal();
+        $this->assertEquals(75.00, $total);
+
+        $items = $checkout->getItems();
+        $this->assertEquals(2, $items[0]->getQuantity());
+    }
+
+    public function testGetTotalForBuy3Get4Strategy() {
+
+        $checkout = new Checkout();
+
+        $checkout->scan("C", 3);
+
+        $total  = $checkout->getTotal();
+        $this->assertEquals(75.00, $total);
+
+        $items = $checkout->getItems();
+        $this->assertEquals(4, $items[0]->getQuantity());
+    }
+
+    public function testGetTotalForMultipleGetPriceStrategy() {
+
+        $checkout = new Checkout();
+
+        $checkout->scan("D", 1);
+        $checkout->scan("E", 1);
+
+        $total  = $checkout->getTotal();
+        $this->assertEquals(3, $total);
+    }
 }

@@ -65,7 +65,6 @@ class Checkout
         // Return null if SKU is not found
         return null;
     }
-
     private function loadProducts() : void
     {
         $this->products = [
@@ -79,26 +78,38 @@ class Checkout
             ],
             [
                 "sku" => "C",
-                "price" => 75,
-            ],
-            [
-                "sku" => "D",
                 "price" => 25,
             ],
             [
-                "sku" => "E",
+                "sku" => "D",
                 "price" => 150,
             ],
             [
-                "sku" => "F",
+                "sku" => "E",
                 "price" => 200,
             ],
         ];
     }
 
-    private function addItem(Item $item): void
-    {
-        $this->items[] = $item;
+    public function getTotal() {
+
+        $total = 0.0;
+
+        foreach ($this->items as $item) {
+
+            $price = $item->getPrice();
+            $quantity = $item->getQuantity();
+
+            // Check if there are changes applied to the item
+            $changes = $item->getChanges();
+            if (!empty($changes) && is_string($changes['sku'])) {
+                $quantity -= $changes['free_quantity'];
+            }
+
+            $total += $price * $quantity;
+        }
+
+        return $total;
     }
 
     private function setItems(array $items): void
@@ -106,7 +117,7 @@ class Checkout
         $this->items = $items;
     }
 
-    private function getItems(): array
+    public function getItems(): array
     {
         return $this->items;
     }

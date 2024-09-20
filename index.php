@@ -2,22 +2,12 @@
 
 require 'vendor/autoload.php';
 
-use Tiagogomes\Supermarket\Item;
-use Tiagogomes\Supermarket\PricingRules;
+use Tiagogomes\Supermarket\Checkout;
 
-$item = new Item(
-    "A",
-    "A",
-    12,
-    1
-);
+$checkout = new Checkout();
 
-$items = [
-    $item,
-];
+// scan product 
+$checkout->scan("A", 3);
 
-$pricingRule = new PricingRules($items);
-
-$pricingRule->loadRules();
-
-$item = $pricingRule->apply($item);
+// get calculations
+echo "The total price is: " . $checkout->getTotal();
