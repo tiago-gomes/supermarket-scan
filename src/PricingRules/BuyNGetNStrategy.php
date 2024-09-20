@@ -14,6 +14,13 @@ class BuyNGetNStrategy implements RuleStrategyInterface
 
     const REQUIRED_QUANTITY = 1;
 
+    private array $items = [];
+
+    public function getItems(): array
+    {
+        return $this->items;
+    }
+
     public function apply(Item $item = null, array $items = null, array $params = []): Item
     {
 

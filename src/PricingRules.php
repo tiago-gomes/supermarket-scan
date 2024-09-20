@@ -15,6 +15,17 @@ class PricingRules implements CalculateRulesInterface
 
     public function __construct(array $items)
     {
+        $this->updateItems($items);
+        $this->loadRules();
+    }
+
+    private function addItem(Item $item)
+    {
+        $this->items[] = $item;
+    }
+
+    private function updateItems(array $items)
+    {
         $this->items = $items;
     }
 
@@ -29,8 +40,8 @@ class PricingRules implements CalculateRulesInterface
             [
                 "class" => BuyNGetNStrategy::class,
                 "params" => [
-                    "sku" => "A",
-                    "description" => "Buy one item A, get another one free.",
+                    "sku" => "B",
+                    "description" => "Buy one item B, get another one free.",
                     "free_quantity" => 1,
                     "required_quantity" => 1,
                 ]
@@ -38,7 +49,7 @@ class PricingRules implements CalculateRulesInterface
             [
                 "class" => BuyNGetNStrategy::class,
                 "params" => [
-                    "sku" => "B",
+                    "sku" => "C",
                     "description" => "Buy 3 item B, get another one free.",
                     "free_quantity" => 1,
                     "required_quantity" => 3,
@@ -62,14 +73,17 @@ class PricingRules implements CalculateRulesInterface
     {
        foreach($this->rules as $rule) {
 
+            // if sku is not available we can not continue.
             if (!isset($rule['params']['sku'])) {
                 break;
             }
 
             // depending on the value of sku: string or array
+            // we run the correct class.
             if (
                 $rule['params']['sku'] == $item->getSku() ||
-                in_array($item->getSku(), $rule['params']['sku'])
+                is_array($rule['params']['sku']) &&
+                in_array($item->getSku(), $rule['params']['sku']) 
             ) {
 
                 $strategyClass = $rule['class'];
@@ -84,11 +98,22 @@ class PricingRules implements CalculateRulesInterface
                     throw new \Exception("Class {$strategyClass} must implement RuleStrategyInterface.");
                 }
 
-                $item = $strategy->apply($item, $this->items, $rule['params']);
+                $item = $strategy->apply($item, $this->getItems(), $rule['params']);
+                
                 break;
             }
        }
 
-       return $item;
+       // mostly used when we have multiple items to update
+        if (
+            isset($strategy) &&
+            !empty($strategy->getItems())
+        ) {
+            $this->updateItems($strategy->getItems());
+        }
+
+        $this->addItem($item);
+
+        return $item;
     }
 }

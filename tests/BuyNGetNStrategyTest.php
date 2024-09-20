@@ -9,8 +9,8 @@ class BuyNGetNStrategyTest extends TestCase
 {
     public function testApplyBuy1Get1Free()
     {
-        $item = new Item('A', 'Test Item A', 10.00, 1);
-        $params = ['sku' => 'A', 'free_quantity' => 1];
+        $item = new Item('B', 'Test Item A', 10.00, 1);
+        $params = ['sku' => 'B', 'free_quantity' => 1];
 
         $strategy = new BuyNGetNStrategy();
         $result = $strategy->apply($item, null, $params);
