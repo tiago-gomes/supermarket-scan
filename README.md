@@ -1,4 +1,5 @@
 Supermarket
+-------------------------------------
 
 Implement the code for a supermarket checkout that calculates the total price of several items. In a normal supermarket, items are identified by ‘stock keeping units’ or ‘SKUs’. In our store, we will use individual letters of the alphabet, A, B, C etc, as the SKUs. Our goods are priced individually. In addition, some items have promotions of any of the following types:
 
