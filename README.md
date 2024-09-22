@@ -28,3 +28,15 @@ C 25 Buy 3, get one free
 D 150 Buy D and E for £3
 
 E 200 Buy D and E for £3
+
+## usage:
+$checkout = new Checkout();
+
+// scan product 
+$checkout->scan("A", 3);
+$checkout->scan("B", 3);
+$checkout->scan("C", 3);
+
+
+// get calculations
+echo "The total price is: " . $checkout->getTotal();
