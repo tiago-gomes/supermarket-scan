@@ -33,8 +33,11 @@ E 200 Buy D and E for £3
 $checkout = new Checkout();
 
 // scan product 
+
 $checkout->scan("A", 3);
+
 $checkout->scan("B", 3);
+
 $checkout->scan("C", 3);
 
 
